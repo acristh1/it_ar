@@ -221,21 +221,21 @@ template<class T, class C>
 inline int CBTree<T, C>::Iterator_in_order::operator++(int d)
 {
 	cnodos++;
-	if (((*q)->m_son[h_der] != 0)) {
+	if (((*q)->m_son[1] != 0)) {
 		ppadres.push(*q);
-		pila.push(ir_der);
-		q = &((*q)->m_son[h_der]);
-		while ((*q)->m_son[h_izq] != 0)
+		pila.push(2);
+		q = &((*q)->m_son[1]);
+		while ((*q)->m_son[0] != 0)
 		{
 			ppadres.push(*q);
-			pila.push(ir_izq);
-			q = &((*q)->m_son[h_izq]);
+			pila.push(1);
+			q = &((*q)->m_son[0]);
 		}
 
 	}
 	else {
 
-		while (!(pila.empty()) && (pila.top() == ir_der)) {
+		while (!(pila.empty()) && (pila.top() == 2)) {
 
 			q = &(ppadres.top());
 			ppadres.pop();
@@ -259,10 +259,10 @@ template<class T, class C>
 inline int CBTree<T, C>::Iterator_in_order::begin()
 {
 	cnodos = 0;
-	while ((*q)->m_son[h_izq] != 0) {
+	while ((*q)->m_son[0] != 0) {
 		ppadres.push(*q);
-		pila.push(ir_izq);
-		q = &((*q)->m_son[h_izq]);
+		pila.push(1);
+		q = &((*q)->m_son[0]);
 	}
 	return 0;
 }
@@ -391,27 +391,42 @@ template<class T, class C>
 inline int CBTree<T, C>::Iterator_post_order::operator++(int d)
 {
 	cnodos++;
-	if ((*q)->m_son[1] == 0 || (*q)->m_son[0] == 0) {
-		q = &(ppadres.top());
-		ppadres.pop();
-		pila.pop();
-	}
-	if (((*q)->m_son[1] != 0) && pila.top() != 2) {
-		ppadres.push(*q);
-		pila.push(2);
-		q = &((*q)->m_son[1]);
-		while ((*q)->m_son[0] != 0)
-		{
-			ppadres.push(*q);
-			pila.push(1);
-			q = &((*q)->m_son[0]);
-		}
-	}
-	else {
+	while ((*q)->m_son[0] != 0 && pila.top()==1) {
 		ppadres.push(*q);
 		pila.push(1);
 		q = &((*q)->m_son[0]);
 	}
+	while (!ppadres.empty() && ((*q)->m_son[1] == 0 || (*q)->m_son[0] == 0))
+	{
+		q = &(ppadres.top());
+		ppadres.pop();
+		pila.pop();
+	}
+	while (pila.top() != 2 && (*q)->m_son[1] != 0) {
+		ppadres.push(*q);
+		pila.push(2);
+		q = &((*q)->m_son[1]);
+		
+	}
+	if(pila.top()==2) {
+		q = &(ppadres.top());
+		//ppadres.pop();
+		//pila.pop();
+		if ((*q)->m_son[1] != 0) {
+			//ppadres.push(*q);
+
+			q = &((*q)->m_son[1]);
+			pila.push(2);
+		}
+	}
+	/*
+	
+	if ((*q)->m_son[1] != 0) {
+		q = &((*q)->m_son[1]);
+	}*/
+
+	//if(pila.top()==2)
+	
 
 	return int();
 }
