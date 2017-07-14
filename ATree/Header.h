@@ -431,21 +431,17 @@ inline int CBTree<T, C>::Iterator_post_order::operator++(int d)
 		q = &(ppadres.top());
 		ppadres.pop();
 		pila.pop();
-		//hay hijo derecho?
-		if ((*q)->m_son[1] == 0)
-		{
-			//no
-			return 1;
-		}
-		else
+		//hay heredo
+		while((*q)->m_son[1] != 0)
 		{
 			//si
 			ppadres.push(*q);
 			pila.push(2);
 			q = &((*q)->m_son[1]);
-			//buscar el ultimo hijo izquierdo
+			//buscar el ultimo hereredo
 			while ((*q)->m_son[0] != 0)
 			{
+
 				ppadres.push(*q);
 				pila.push(1);
 				q = &((*q)->m_son[0]);
