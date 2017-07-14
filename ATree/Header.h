@@ -201,6 +201,7 @@ CBNode<T>** CBTree<T, C>::Rep(CBNode<T> **p) {
 };
 
 // ------------------------in order------------------------------------------------------
+#pragma region inorden
 template<class T, class C>
 inline CBTree<T, C>::Iterator_in_order::Iterator_in_order(CBTree<T, C> &arbol)
 {
@@ -286,9 +287,10 @@ template<class T, class C>
 CBTree<T, C>::Iterator_in_order::~Iterator_in_order() {
 
 };
-
+#pragma endregion
 
 // ----------------------------------------preorden-------------------------------------------------------
+#pragma region preorden
 template<class T, class C>
 inline CBTree<T, C>::Iterator_pre_order::Iterator_pre_order(CBTree<T, C>& arbol)
 {
@@ -369,9 +371,10 @@ template<class T, class C>
 inline CBTree<T, C>::Iterator_pre_order::~Iterator_pre_order()
 {
 }
-
+#pragma	endregion
 
 //----------------post_order-----------------------------
+#pragma region postorden
 template<class T, class C>
 inline CBTree<T, C>::Iterator_post_order::Iterator_post_order(CBTree<T, C>& arbol)
 {
@@ -391,6 +394,58 @@ template<class T, class C>
 inline int CBTree<T, C>::Iterator_post_order::operator++(int d)
 {
 	cnodos++;
+	//Necesito un padre para avanzar
+	if (ppadres.size() == 0)
+	{
+		//soy huerfano, no hay a donde ir, no tengo futuro.
+		return 0;
+	}
+	//dos casos diferentes, soy hijo izquierdo o derecho?
+	if (pila.top() == 1)
+	{
+		//soy hijo izquierdo
+		//ahora sere el padre
+		q = &(ppadres.top());
+		ppadres.pop();
+		pila.pop();
+		//hay hijo derecho?
+		if ((*q)->m_son[1] == 0)
+		{
+			//no
+			return 1;
+		}
+		else
+		{
+			//si
+			ppadres.push(*q);
+			pila.push(2);
+			q = &((*q)->m_son[1]);
+			//buscar el ultimo hijo izquierdo
+			while ((*q)->m_son[0] != 0)
+			{
+				ppadres.push(*q);
+				pila.push(1);
+				q = &((*q)->m_son[0]);
+			}
+		}
+	}
+	else if(pila.top()==2)
+	{
+		//soy hijo derecho
+		//ahora sere el padre
+		q = &(ppadres.top());
+		ppadres.pop();
+		pila.pop();
+		//por la naturaleza de la vida... que diga el iterador. no hay mas que hacer.
+		return 2;
+	}
+	else
+	{
+		//si no soy hijo derecho ni hijo izquierdo, que soy?
+		return 0;
+	}
+	/*
+	//version anterior.
 	while ((*q)->m_son[0] != 0 && pila.top()==1) {
 		ppadres.push(*q);
 		pila.push(1);
@@ -419,15 +474,15 @@ inline int CBTree<T, C>::Iterator_post_order::operator++(int d)
 			pila.push(2);
 		}
 	}
-	/*
+
 	
 	if ((*q)->m_son[1] != 0) {
 		q = &((*q)->m_son[1]);
-	}*/
+	}
 
 	//if(pila.top()==2)
 	
-
+	*/
 	return int();
 }
 
@@ -439,6 +494,7 @@ inline int CBTree<T, C>::Iterator_post_order::begin()
 		ppadres.push(*q);
 		pila.push(1);
 		q = &((*q)->m_son[0]);
+		cnodos++;
 	}
 	return 0;
 }
@@ -461,3 +517,4 @@ template<class T, class C>
 inline CBTree<T, C>::Iterator_post_order::~Iterator_post_order()
 {
 }
+#pragma endregion
