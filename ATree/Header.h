@@ -2,18 +2,19 @@
 #include <stack>
 
 using namespace std;
-/* para RECORRIDO REVERSA
+ 
+//para RECORRIDO REVERSA
 const int ir_izq = 2;
 const int ir_der = 1;
 const int h_izq = 1;
 const int h_der = 0;
-*/
+/*
 //PARA RECORRIDO INORDEN
 const int ir_izq = 1;
 const int ir_der = 2;
 const int h_izq = 0;
 const int h_der = 1;
-
+*/
 template<class T>
 struct CBNode
 {
@@ -76,6 +77,28 @@ public:
 
 		Iterator_pre_order();
 		~Iterator_pre_order();
+
+	private:
+
+	};
+
+	class Iterator_reverse
+	{
+	public:
+		stack<CBNode<T>*> ppadres;
+		stack<int> pila;
+		CBNode<T> **q;
+		Iterator_reverse(CBTree<T, C> &arbol);
+		int cnodos;
+		int tnodos;
+
+		T operator *();
+		int operator ++(int d);
+		int begin();
+		bool end();
+
+		Iterator_reverse();
+		~Iterator_reverse();
 
 	private:
 
@@ -444,45 +467,7 @@ inline int CBTree<T, C>::Iterator_post_order::operator++(int d)
 		//si no soy hijo derecho ni hijo izquierdo, que soy?
 		return 0;
 	}
-	/*
-	//version anterior.
-	while ((*q)->m_son[0] != 0 && pila.top()==1) {
-		ppadres.push(*q);
-		pila.push(1);
-		q = &((*q)->m_son[0]);
-	}
-	while (!ppadres.empty() && ((*q)->m_son[1] == 0 || (*q)->m_son[0] == 0))
-	{
-		q = &(ppadres.top());
-		ppadres.pop();
-		pila.pop();
-	}
-	while (pila.top() != 2 && (*q)->m_son[1] != 0) {
-		ppadres.push(*q);
-		pila.push(2);
-		q = &((*q)->m_son[1]);
-		
-	}
-	if(pila.top()==2) {
-		q = &(ppadres.top());
-		//ppadres.pop();
-		//pila.pop();
-		if ((*q)->m_son[1] != 0) {
-			//ppadres.push(*q);
-
-			q = &((*q)->m_son[1]);
-			pila.push(2);
-		}
-	}
-
 	
-	if ((*q)->m_son[1] != 0) {
-		q = &((*q)->m_son[1]);
-	}
-
-	//if(pila.top()==2)
-	
-	*/
 	return int();
 }
 
@@ -518,3 +503,90 @@ inline CBTree<T, C>::Iterator_post_order::~Iterator_post_order()
 {
 }
 #pragma endregion
+
+//-----------------------------------------reverse-----------------------------------------
+
+
+template<class T, class C>
+inline CBTree<T, C>::Iterator_reverse::Iterator_reverse(CBTree<T, C>& arbol)
+{
+	tnodos = arbol.nnodos;
+	q = &(arbol.m_root);
+	begin();
+}
+
+template<class T, class C>
+inline T CBTree<T, C>::Iterator_reverse::operator*()
+{
+	return (*q)->m_data;
+}
+
+template<class T, class C>
+inline int CBTree<T, C>::Iterator_reverse::operator++(int d)
+{
+	cnodos++;
+	if (((*q)->m_son[h_der] != 0)) {
+		ppadres.push(*q);
+		pila.push(ir_der);
+		q = &((*q)->m_son[h_der]);
+		while ((*q)->m_son[h_izq] != 0)
+		{
+			ppadres.push(*q);
+			pila.push(ir_izq);
+			q = &((*q)->m_son[h_izq]);
+		}
+
+	}
+	else {
+
+		while (!(pila.empty()) && (pila.top() == ir_der)) {
+
+			q = &(ppadres.top());
+			ppadres.pop();
+			pila.pop();
+		}
+		if (pila.empty())
+			return -1;
+
+		q = &(ppadres.top());
+		ppadres.pop();
+		pila.pop();
+
+
+	}
+
+
+	return int();
+}
+
+template<class T, class C>
+inline int CBTree<T, C>::Iterator_reverse::begin()
+{
+	cnodos = 0;
+	while ((*q)->m_son[h_izq] != 0) {
+		ppadres.push(*q);
+		pila.push(ir_izq);
+		q = &((*q)->m_son[h_izq]);
+	}
+	return 0;
+}
+
+template<class T, class C>
+inline bool CBTree<T, C>::Iterator_reverse::end()
+{
+	if (cnodos < tnodos)
+		return true;
+	return false;
+}
+
+template<class T, class C>
+inline CBTree<T, C>::Iterator_reverse::Iterator_reverse()
+{
+	q = 0;
+
+}
+
+template<class T, class C>
+inline CBTree<T, C>::Iterator_reverse::~Iterator_reverse()
+{
+}

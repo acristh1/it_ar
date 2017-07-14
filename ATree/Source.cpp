@@ -18,9 +18,9 @@ int main() {
 	a.insert(65);
 	a.insert(110);
 
-	a.remove(8);
-	a.remove(93);
-	a.remove(63);
+	//a.remove(8);
+	//a.remove(93);
+	//a.remove(63);
 	//a.insert(70);
 
 	CBTree<int, Cless>::Iterator_in_order it(a);
@@ -32,6 +32,7 @@ int main() {
 		
 	}
 	
+		cout << endl;
 		//recorrido preorden
 	cout << endl <<" pre_order " <<endl;
 	CBTree<int, Cless>::Iterator_pre_order itpre(a);
@@ -40,6 +41,8 @@ int main() {
 			cout << " " << *itpre;
 		}
 
+		cout << endl;
+
 		//recorrido postorden
 		cout << endl << " post_order " << endl;
 		CBTree<int, Cless>::Iterator_post_order itpost(a);
@@ -47,6 +50,18 @@ int main() {
 		for (itpost.begin(); itpost.end(); itpost++) {
 			cout << " " << *itpost;
 		}
+
+		cout << endl;
+
+		//recorrido reverse
+		cout << endl << " reverse " << endl;
+		CBTree<int, Cless>::Iterator_reverse itrever(a);
+
+		for (itrever.begin(); itrever.end(); itrever++) {
+			cout << " " << *itrever;
+		}
+
+		cout << endl;
 	
 	return 0;
 }
